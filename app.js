@@ -27,6 +27,7 @@ app.use(express.json())
 Object.keys(routes).forEach((routeId) => {
   externalWebsocketClient.on(`${routeId}/position`, (data) => {
     positionUpdates[routeId] = data
+    websocketServer.emit('updatingPositions', { routeid: routeId, position: data })
   })
 })
 
@@ -48,12 +49,6 @@ websocketServer.on('connection', (socket) => {
     }))
 
     websocketServer.to(socket.id).emit('gettingPositions', positionUpdates)
-  })
-
-  Object.keys(routes).forEach((routeId) => {
-    externalWebsocketClient.on(`${routeId}/position`, (data) => {
-      websocketServer.to(socket.id).emit('updatingPositions', { routeid: routeId, position: data })
-    })
   })
 
   socket.on('disconnect', () => {
