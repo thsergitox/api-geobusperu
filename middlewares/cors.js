@@ -1,13 +1,8 @@
 import cors from 'cors'
 
-const ACCEPTED_ORIGINS = [
-  'http://localhost:5500',
-  'http://localhost:3000'
-]
-
-export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => cors({
+export const corsMiddleware = () => cors({
   origin: (origin, callback) => {
-    if (ACCEPTED_ORIGINS.includes(origin)) {
+    if (!origin || origin.startsWith(process.env.ORIGIN) || origin.startsWith(process.env.DEV)) {
       return callback(null, true)
     }
 
